@@ -224,12 +224,12 @@ export default function Dashboard() {
       {/* Resumen del día */}
       <div className="grid grid-cols-3 gap-3 mb-8">
         <div className="rounded-xl p-4" style={{ background: 'var(--bg-2)', border: '1px solid var(--border)' }}>
-          <p className="text-xs mb-1" style={{ color: 'var(--text-3)' }}>Hábitos</p>
-          <p className="text-xl font-semibold">{habitsDone}/{habitsTotal}</p>
-        </div>
-        <div className="rounded-xl p-4" style={{ background: 'var(--bg-2)', border: '1px solid var(--border)' }}>
           <p className="text-xs mb-1" style={{ color: 'var(--text-3)' }}>Rutina</p>
           <p className="text-xl font-semibold">{routineDone}/{routineTotal}</p>
+        </div>
+        <div className="rounded-xl p-4" style={{ background: 'var(--bg-2)', border: '1px solid var(--border)' }}>
+          <p className="text-xs mb-1" style={{ color: 'var(--text-3)' }}>Hábitos</p>
+          <p className="text-xl font-semibold">{habitsDone}/{habitsTotal}</p>
         </div>
         <div className="rounded-xl p-4" style={{ background: 'var(--bg-2)', border: '1px solid var(--border)' }}>
           <p className="text-xs mb-1" style={{ color: 'var(--text-3)' }}>Tareas</p>
@@ -238,6 +238,44 @@ export default function Dashboard() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
+        {/* Rutina de hoy */}
+        <section>
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs font-medium" style={{ color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Rutina</p>
+            <span className="text-xs" style={{ color: 'var(--text-3)' }}>{routineDone}/{routineTotal}</span>
+          </div>
+          <div className="rounded-xl p-1" style={{ background: 'var(--bg-2)', border: '1px solid var(--border)' }}>
+            {routineBlocks.length === 0 && (
+              <p className="text-sm px-3 py-4" style={{ color: 'var(--text-3)' }}>Sin bloques para hoy</p>
+            )}
+            {routineBlocks.map(block => {
+              const done = completions.some(c => c.routine_block_id === block.id)
+              return (
+                <button
+                  key={block.id}
+                  onClick={() => toggleBlockCompletion(block)}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-left"
+                  style={{ background: done ? `${block.color}10` : 'transparent' }}
+                >
+                  {done
+                    ? <CheckCircle2 size={16} style={{ color: block.color, flexShrink: 0 }} />
+                    : <Circle size={16} style={{ color: 'var(--text-3)', flexShrink: 0 }} />
+                  }
+                  <span className="text-xs tabular-nums flex-shrink-0" style={{ color: 'var(--text-3)' }}>
+                    {block.start_time.slice(0, 5)}
+                  </span>
+                  <span className="flex-1 text-sm" style={{
+                    color: done ? 'var(--text-3)' : 'var(--text)',
+                    textDecoration: done ? 'line-through' : 'none',
+                  }}>
+                    {block.label}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </section>
+
         {/* Hábitos de hoy */}
         <section>
           <div className="flex items-center justify-between mb-3">
@@ -301,44 +339,6 @@ export default function Dashboard() {
                     </div>
                   )}
                 </div>
-              )
-            })}
-          </div>
-        </section>
-
-        {/* Rutina de hoy */}
-        <section>
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-xs font-medium" style={{ color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Rutina</p>
-            <span className="text-xs" style={{ color: 'var(--text-3)' }}>{routineDone}/{routineTotal}</span>
-          </div>
-          <div className="rounded-xl p-1" style={{ background: 'var(--bg-2)', border: '1px solid var(--border)' }}>
-            {routineBlocks.length === 0 && (
-              <p className="text-sm px-3 py-4" style={{ color: 'var(--text-3)' }}>Sin bloques para hoy</p>
-            )}
-            {routineBlocks.map(block => {
-              const done = completions.some(c => c.routine_block_id === block.id)
-              return (
-                <button
-                  key={block.id}
-                  onClick={() => toggleBlockCompletion(block)}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-left"
-                  style={{ background: done ? `${block.color}10` : 'transparent' }}
-                >
-                  {done
-                    ? <CheckCircle2 size={16} style={{ color: block.color, flexShrink: 0 }} />
-                    : <Circle size={16} style={{ color: 'var(--text-3)', flexShrink: 0 }} />
-                  }
-                  <span className="text-xs tabular-nums flex-shrink-0" style={{ color: 'var(--text-3)' }}>
-                    {block.start_time.slice(0, 5)}
-                  </span>
-                  <span className="flex-1 text-sm" style={{
-                    color: done ? 'var(--text-3)' : 'var(--text)',
-                    textDecoration: done ? 'line-through' : 'none',
-                  }}>
-                    {block.label}
-                  </span>
-                </button>
               )
             })}
           </div>
